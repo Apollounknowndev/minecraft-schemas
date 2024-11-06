@@ -487,7 +487,7 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
         if (typeof v === 'string' && !v.startsWith('#')) {
           return [v]
         }
-        return []
+        return [""]
       }
     },
   ], { choiceContext: 'tag' })
@@ -641,7 +641,7 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
             color: StringNode({ enum: 'dye_color' })
           })
         ),
-        append: Opt(BooleanNode())
+        append: BooleanNode()
       },
       'minecraft:set_contents': {
         type: StringNode({ validator: 'resource', params: { pool: 'block_entity_type' } }),

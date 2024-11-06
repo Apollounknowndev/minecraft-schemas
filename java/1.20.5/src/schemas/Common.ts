@@ -474,7 +474,7 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
         if (typeof v === 'string' && !v.startsWith('#')) {
           return [v]
         }
-        return []
+        return [""]
       }
     },
   ], { choiceContext: 'tag' })
@@ -689,10 +689,16 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
       'minecraft:reference': {
         name: StringNode({ validator: 'resource', params: { pool: '$item_modifier' } })
       },
+      'minecraft:sequence': {
+        functions: ListNode(
+          Reference('function')
+        ),
+      },
       'minecraft:set_attributes': {
         modifiers: ListNode(
           Reference('attribute_modifier')
-        )
+        ),
+        replace: Opt(BooleanNode()),
       },
       'minecraft:set_banner_pattern': {
         patterns: ListNode(
@@ -701,7 +707,7 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
             color: StringNode({ enum: 'dye_color' })
           })
         ),
-        append: Opt(BooleanNode())
+        append: BooleanNode()
       },
       'minecraft:set_book_cover': {
         title: Opt(Filterable(SizeLimitedString({ maxLength: 32 }))),
@@ -821,7 +827,7 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
     }
     const res: NestedNodeChildren = {}
     collections.get('loot_function_type').forEach(f => {
-      res[f] = {...cases[f], ...conditions }
+      res[f] = {...cases[f], ...(f === 'minecraft:sequence' ? {} : conditions) }
     })
     return res
   }

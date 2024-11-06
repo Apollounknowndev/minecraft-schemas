@@ -476,7 +476,7 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
         if (typeof v === 'string' && !v.startsWith('#')) {
           return [v]
         }
-        return []
+        return [""]
       }
     },
   ], { choiceContext: 'tag' })
@@ -626,6 +626,11 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
       'minecraft:reference': {
         name: StringNode({ validator: 'resource', params: { pool: '$item_modifier' } })
       },
+      'minecraft:sequence': {
+        functions: ListNode(
+          Reference('item_modifier')
+        ),
+      },
       'minecraft:set_attributes': {
         modifiers: ListNode(
           Reference('attribute_modifier')
@@ -638,7 +643,7 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
             color: StringNode({ enum: 'dye_color' })
           })
         ),
-        append: Opt(BooleanNode())
+        append: BooleanNode()
       },
       'minecraft:set_contents': {
         type: StringNode({ validator: 'resource', params: { pool: 'block_entity_type' } }),
@@ -697,7 +702,7 @@ export function initCommonSchemas(schemas: SchemaRegistry, collections: Collecti
     }
     const res: NestedNodeChildren = {}
     collections.get('loot_function_type').forEach(f => {
-      res[f] = {...cases[f], ...conditions }
+      res[f] = {...cases[f], ...(f === 'minecraft:sequence' ? {} : conditions) }
     })
     return res
   }
